@@ -34,8 +34,8 @@ def _gen_filter_seq_recursive(filter_args, filters):
         filter_name = filter_args[0]
 
         # TODO check filter names
-
         f = [f for f in filters if f.name == filter_name.lower()][0]
+
         f_arg_num = len(f.get_params())
         args = filter_args[1:1 + f_arg_num]
         params = _extract_params(f, args)

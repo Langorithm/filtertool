@@ -3,8 +3,8 @@ Represents an image filter, including its effect on files,
 the type/requirements of its parameters.
 
 """
-
 from typing import Any, NamedTuple, Callable
+import filtertool.effects as effects
 
 
 class Param(NamedTuple):
@@ -41,18 +41,23 @@ class Filter:
         return self._effect(image, **kwargs)
 
 
-# ------- effects functions --------
-# TODO detail effect function specifications
-
-def grayscale_fx(image, **_):
-    print("The image has turned gray")  # TODO add actual functionality
-    return image
-
-
 # ------- Filter Instances --------
 
 filters = set()
 
 gs = Filter("grayscale", "Turn image black and white.")
-gs.set_effect(grayscale_fx)
+gs.set_effect(effects.grayscale_fx)
 filters.add(gs)
+
+rot = Filter("rotate", "Rotate the Image N degrees clockwise.")
+degrees = Param(name="Degrees", param_type=int, validity_func=lambda n: n <= 360, validity_str="n<=360")
+rot.add_param(degrees)
+rot.set_effect(effects.rotate_fx)
+filters.add(rot)
+
+overlay = Filter("overlay", "Blends a second image into the first.")
+img2 = Param(name="Image2_filename", param_type=str, validity_func=lambda: True, validity_str="")
+# TODO placing
+overlay.add_param(img2)
+overlay.set_effect(effects.overlay_fx)
+filters.add(overlay)

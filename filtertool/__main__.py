@@ -15,3 +15,4 @@ if __name__ == '__main__':
 
     # TODO allow no output file name in args
     image.save(output_filename)
+    image.show()
