@@ -16,11 +16,12 @@ class Param(NamedTuple):
 
 class Filter:
     """Filter docstring TODO"""
-    def __init__(self, name, description):
+    # TODO verbosity description
+    def __init__(self, name, help_text, effect, params=None):
         self.name = name.lower()
-        self.description = description
-        self._params = []
-        self._effect = None
+        self.description = help_text
+        self._params = params
+        self._effect = effect
         # TODO multiple names (gs = grayscale, rot = rotate, etc)
 
     def __repr__(self): return f"filter {self.name}, params: {self._params}"
@@ -45,19 +46,35 @@ class Filter:
 
 filters = set()
 
-gs = Filter("grayscale", "Turn image black and white.")
-gs.set_effect(effects.grayscale_fx)
-filters.add(gs)
+filter_gs = Filter(
+    "grayscale",
+    "Turn image black and white.",
+    effects.grayscale_fx)
+filters.add(filter_gs)
 
-rot = Filter("rotate", "Rotate the Image N degrees clockwise.")
-degrees = Param(name="Degrees", param_type=int, validity_func=lambda n: n <= 360, validity_str="n<=360")
-rot.add_param(degrees)
-rot.set_effect(effects.rotate_fx)
-filters.add(rot)
+param_rot_degrees = Param(
+    name="Degrees",
+    param_type=int,
+    validity_func=lambda n: n <= 360,
+    validity_str="n<=360")
+filter_rot = Filter(
+    name="rotate",
+    help_text="Rotate the Image N degrees clockwise.",
+    effect=effects.rotate_fx,
+    params=[param_rot_degrees])
+filters.add(filter_rot)
 
-overlay = Filter("overlay", "Blends a second image into the first.")
-img2 = Param(name="Image2_filename", param_type=str, validity_func=lambda: True, validity_str="")
+supported_formats = ".png", ".jpg", ".jpeg"
+param_overlay_img2 = Param(
+    name="Image2_filename",
+    param_type=str,
+    validity_func=lambda filename: filename.lower().endswith(supported_formats),
+    validity_str=f"Invalid file format.\t [Supported formats: {' '.join(supported_formats)}]")
 # TODO placing
-overlay.add_param(img2)
-overlay.set_effect(effects.overlay_fx)
+overlay = Filter(
+    "overlay",
+    "Blends a second image into the first.",
+    effects.overlay_fx,
+    [param_overlay_img2]
+)
 filters.add(overlay)

@@ -60,7 +60,7 @@ def _overlay_aux(image1, image2):
     gray = (127,)*4
 
     top_image = Image.new("RGBA", image1.size, gray)
-    top_image.paste(image2, (0, 0), image2)  # todo choose coordinates
+    top_image.paste(image2, (0, 0), image2)  # todo: choose coordinates
 
     result = ImageChops.overlay(image1, top_image)
     result = result.convert(im1_prev_mode)

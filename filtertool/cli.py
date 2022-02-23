@@ -1,7 +1,8 @@
 """Collection of functions handling the interaction with the Command Line"""
-
+import sys
 import argparse as ap
 import filtertool.filter_class as filter_class
+import filtertool.exceptions as exceptions
 
 
 def parse_arguments():
@@ -33,7 +34,8 @@ def _gen_filter_seq_recursive(filter_args, filters):
     else:
         filter_name = filter_args[0]
 
-        # TODO check filter names
+        _check_filter_name(filter_name, filters)
+
         f = [f for f in filters if f.name == filter_name.lower()][0]
 
         f_arg_num = len(f.get_params())
@@ -45,8 +47,10 @@ def _gen_filter_seq_recursive(filter_args, filters):
 
 def _extract_params(_filter, args):
     """Given a filter and the names of its arguments,
-    convert from string to correct type and validate correctness.
-    Return the list of parameters to be used in the application of the filter"""
+    convert from string to expected type and validate correctness of parameters.
+
+    Return the list of parameters to be used when applying
+    filter's effects."""
     expected_params = _filter.get_params()
     assert (len(expected_params) == len(args))
 
@@ -55,8 +59,44 @@ def _extract_params(_filter, args):
         expected_param = expected_params[i]
         arg = args[i]
 
-        # TODO validate parameters and types
-        param = expected_param.param_type(arg)
+        param = _typecast_param(arg, expected_param)
+        _validate_param(param, expected_param)
+
         params[expected_param.name] = param
 
     return params
+
+
+# ----- Functions that check for exceptions arisen from mistakes in the CLI ------
+
+def _typecast_param(param, expected_param):
+    """Tries converting parsed parameter from string to what is needed for the filter's effect"""
+    try:
+        filter_param = expected_param.param_type(param)
+    except ValueError:
+        print("Error!")
+        print(f"Expected '{expected_param.name}':{param.upper()} to be a '{expected_param.param_type}'.\n")
+        sys.exit(1)
+    else:
+        return filter_param
+
+
+def _validate_param(param, expected_param):
+    """Makes sure parameter complies with its preconditions"""
+    try:
+        if not expected_param.validity_func(param):
+            raise exceptions.ConditionError(param=param, condition=expected_param.validity_str)
+    except exceptions.ConditionError as e:
+        print(e)
+        sys.exit(1)
+
+
+def _check_filter_name(name, filters):
+    """Verifies filter with given name is present in filter collection"""
+    try:
+        if not name.lower() in [f.name for f in filters]:
+            raise Exception(f"'{name.upper()}' is not a filter.")
+    except Exception as e:
+        print("Error!\n", e, "\n")
+        sys.exit(1)
+
