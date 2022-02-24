@@ -7,6 +7,7 @@ import filtertool.filter_class as filter_class
 import filtertool.exceptions as exceptions
 from filtertool.__init__ import __app_name__
 
+
 def parse_arguments():
     parser = ap.ArgumentParser()
     parser.prog = __app_name__
@@ -18,7 +19,7 @@ def parse_arguments():
     parser.add_argument("-d", "--display", action="store_true", help="displays the resulting image")
     parser.add_argument("-D", "--display-only", action="store_true",
                         help="displays the resulting image but disables saving it to disk")
-    parser.add_argument("-v", "--verbose", action="store_true")
+    # parser.add_argument("-v", "--verbose", action="store_true")
     # TODO option: verbosity
 
     parser.formatter_class = argparse.RawTextHelpFormatter
@@ -72,7 +73,7 @@ def _extract_params(_filter, args):
         try:
             param = _typecast_param(arg, expected_param)
             _validate_param(param, expected_param)
-        except ValueError as e:
+        except ValueError:
             sys.exit(errno.EINVAL)
 
         params[expected_param.name] = param

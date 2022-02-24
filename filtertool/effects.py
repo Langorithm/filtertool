@@ -1,7 +1,7 @@
 """File to store the functions which handle the actual image modification"""
-from PIL import Image
-from PIL import ImageChops
+import math
 
+from PIL import Image, ImageChops, ImageDraw, ImageFont
 
 def grayscale_fx(image, **_):
     """Turn an image into shades of gray via gray-scaling.
@@ -94,5 +94,61 @@ def _calculate_placement(im1, im2, placement, anchor=(.5, .5)):
     return left_top_corner_placement
 
 
-def memeify_fx():
-    pass  # TODO
+def memeify_fx(image, **kwargs):
+    down_text = kwargs["DOWN_TEXT"]
+    top_text = kwargs["TOP_TEXT"]
+
+    size_x, size_y = image.size
+    text_boundary = size_x * 0.8, size_y * 0.1  # numbers experimentally checked to produce good pictures
+
+    draw_context = ImageDraw.Draw(image)
+
+    if len(top_text) > 0:
+        top_placement = size_x * .5, size_y * 0.05
+        font = _find_perfect_fit(image, top_placement, "Impact", top_text, text_boundary)
+        draw_context.text(top_placement, text=top_text, font=font, anchor="mt", stroke_width=2, stroke_fill="black")
+    if len(down_text) > 0:
+        bottom_placement = size_x * .5, size_y * (1-0.05)
+        font = _find_perfect_fit(image, bottom_placement, "Impact", down_text, text_boundary)
+        draw_context.text(bottom_placement, text=down_text, font=font, anchor="mb", stroke_width=2, stroke_fill="black")
+
+    return image
+
+
+def _find_perfect_fit(image, xy, font_name, text, limits):
+
+    height, width = image.size
+    estimated_text_size = 1 # int(math.sqrt(height * width))
+
+    font = ImageFont.truetype(font_name, estimated_text_size)
+    context = ImageDraw.Draw(image)
+
+    text_fits = _does_text_fit(context, xy, text, font, limits)
+    prev_text_fit = text_fits
+    perfect_fit = False
+    font_size = font.size
+
+    while not perfect_fit:
+        if text_fits:
+            font_size  += 10
+        else:
+            font_size -= 10
+
+        font = ImageFont.truetype(font_name, font_size)
+        print(font_size)
+        text_fits = _does_text_fit(context, xy, text, font, limits)
+        perfect_fit = text_fits ^ prev_text_fit
+
+    return font
+
+
+def _does_text_fit(context, xy, text, font, limits):
+
+    box = context.textbbox(xy, text, font, "mt", align="center", stroke_width=2)
+
+    box_x0, box_y0, box_x1, box_y1 = box
+    box_width  = box_x1 - box_x0
+    box_height = box_y1 - box_y0
+    limit_x, limit_y = limits
+
+    return box_width <= limit_x and box_height <= limit_y

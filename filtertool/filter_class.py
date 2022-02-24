@@ -109,6 +109,34 @@ filter_overlay = Filter(
 )
 filters.append(filter_overlay)
 
+param_memeify_top_text = Param(
+    name="TOP_TEXT",
+    description="Text in the top part of the image.",
+    param_type=str,
+    validity_func=lambda _: True,
+    validity_str=""
+)
+param_memeify_down_text = Param(
+    name="DOWN_TEXT",
+    description="Text in the top part of the image.",
+    param_type=str,
+    validity_func=lambda _: True,
+    validity_str=""
+)
+
+
+filter_memeify = Filter(
+    "memeify",
+    "Turns your image into a 2010's meme!",
+    effects.memeify_fx,
+    params=[param_memeify_top_text, param_memeify_down_text]
+)
+
+# TODO have arguments be optional
+
+filters.append(filter_memeify)
+
+
 
 # Deactivated code
 """
