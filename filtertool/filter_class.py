@@ -24,7 +24,6 @@ class Filter:
     def __repr__(self): return f"filter {self.name}, params: {self._params}"
 
     def add_param(self, param):
-        """docstring TODO"""
         self._params.append(param)
 
     def get_params(self):
@@ -126,7 +125,6 @@ filter_memeify = Filter(
 # TODO have arguments be optional
 
 filters.append(filter_memeify)
-
 
 
 # Deactivated code
