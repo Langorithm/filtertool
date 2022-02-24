@@ -1,13 +1,15 @@
 """Collection of functions handling the interaction with the Command Line"""
+import argparse
 import errno
 import sys
 import argparse as ap
 import filtertool.filter_class as filter_class
 import filtertool.exceptions as exceptions
-
+from filtertool.__init__ import __app_name__
 
 def parse_arguments():
     parser = ap.ArgumentParser()
+    parser.prog = __app_name__
     parser.add_argument("input", help="The image file to be modified.")
     parser.add_argument("filters", nargs="*", help="The filters to be applied and their respective arguments.")
 
@@ -18,8 +20,10 @@ def parse_arguments():
                         help="displays the resulting image but disables saving it to disk")
     parser.add_argument("-v", "--verbose", action="store_true")
     # TODO option: verbosity
-    # TODO option: show image after processing
     # TODO customize the Help option so that it automatically explains available filters.
+
+    parser.formatter_class = argparse.RawTextHelpFormatter
+    parser.epilog = _enhance_help_text(filter_class.filters)
     return parser.parse_args()
 
 
@@ -77,7 +81,20 @@ def _extract_params(_filter, args):
     return params
 
 
+# ----- Usage and Help text functions ------
+def _enhance_help_text(filters):
+    text = "\nfilters:\n"
+    for _filter in filters:
+        text += f"  {_filter.name}\t\t[{_filter.description}]"
+        params = _filter.get_params()
+        for param in params:
+            text += f"\n\t{param.name}: {param.description}"
+        text += "\n \n \n"
+
+    return text
+
 # ----- Functions that check for exceptions arisen from mistakes in the CLI ------
+
 
 def _typecast_param(param, expected_param):
     """Tries converting parsed parameter from string to what is needed for the filter's effect"""

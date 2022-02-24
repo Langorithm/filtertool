@@ -18,11 +18,11 @@ def grayscale_fx(image, **_):
 
 
 def rotate_fx(image, **kwargs):
-    """Rotate an image N degrees counterclockwise. Currently, does not resize the image to fit.
+    """Rotate an image N degrees counter-clockwise. Currently, does not resize the image to fit.
 
     Used keyword arguments:
-        - Degrees (type: int)"""
-    deg = kwargs["Degrees"]
+        - DEGREES (type: int)"""
+    deg = kwargs["DEGREES"]
 
     image = image.rotate(deg)
 
@@ -32,14 +32,14 @@ def rotate_fx(image, **kwargs):
 def overlay_fx(image, **kwargs):
     """Composite a second image into the first by using the Overlay blending mode algorithm
     Used keyword arguments:
-        - Image2_filename (type: str)
-        - Horizontal/Vertical Placement (type: float)
-
-    [Does NOT change the image's mode (And RGB image stays RGB, so on)]
+        - IMG_2 (type: str)
+        - X_PLACE (type: float)
+        - Y_PLACE (type: float)
+    [Does NOT change the image's mode (An RGB image stays RGB, so on)]
     """
     img1 = image
-    img2 = Image.open(kwargs["Image2_filename"])
-    place = kwargs["Horizontal Placement"], kwargs["Vertical Placement"]
+    img2 = Image.open(kwargs["IMG_2"])
+    place = kwargs["X_PLACE"], kwargs["Y_PLACE"]
     # anchor = kwargs["Horizontal Anchor"], kwargs["Vertical Anchor"]
     # Prepare img2 to be blended
     result = _overlay_aux(img1, img2, place)
