@@ -2,6 +2,8 @@ import sys
 
 from PIL import Image
 import filtertool.cli as cli
+import filtertool.output as output
+
 
 if __name__ == '__main__':
     args = cli.parse_arguments()
@@ -19,6 +21,4 @@ if __name__ == '__main__':
     for _filter, params in filters:
         image = _filter.apply(image, params)
 
-    # TODO allow no output file name in args
-    image.save(output_filename)
-    image.show()
+    output.output_image(image, args, output_filename)
