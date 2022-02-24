@@ -9,7 +9,13 @@ def parse_arguments():
     parser = ap.ArgumentParser()
     parser.add_argument("input", help="The image file to be modified.")
     parser.add_argument("filters", nargs="*", help="The filters to be applied and their respective arguments.")
-    parser.add_argument("--output", "-o", help="name of the resulting image file, with file extension.")
+
+    # CLI Options
+    parser.add_argument("-o", "--output", help="name of the resulting image file, with file extension.")
+    parser.add_argument("-d", "--display", action="store_true", help="displays the resulting image")
+    parser.add_argument("-D", "--display-only", action="store_true",
+                        help="displays the resulting image but disables saving it to disk")
+    parser.add_argument("-v", "--verbose", action="store_true")
     # TODO option: verbosity
     # TODO option: show image after processing
     # TODO customize the Help option so that it automatically explains available filters.
