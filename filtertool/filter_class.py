@@ -71,10 +71,10 @@ param_overlay_img2 = Param(
     validity_func=lambda filename: filename.lower().endswith(supported_formats),
     validity_str=f"Invalid file format.\t [Supported formats: {' '.join(supported_formats)}]")
 # TODO placing
-overlay = Filter(
+filter_overlay = Filter(
     "overlay",
     "Blends a second image into the first.",
     effects.overlay_fx,
     [param_overlay_img2]
 )
-filters.add(overlay)
+filters.add(filter_overlay)

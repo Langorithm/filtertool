@@ -1,4 +1,5 @@
 """Collection of functions handling the interaction with the Command Line"""
+import errno
 import sys
 import argparse as ap
 import filtertool.filter_class as filter_class
@@ -65,8 +66,11 @@ def _extract_params(_filter, args):
         expected_param = expected_params[i]
         arg = args[i]
 
-        param = _typecast_param(arg, expected_param)
-        _validate_param(param, expected_param)
+        try:
+            param = _typecast_param(arg, expected_param)
+            _validate_param(param, expected_param)
+        except ValueError as e:
+            sys.exit(errno.EINVAL)
 
         params[expected_param.name] = param
 
@@ -79,10 +83,10 @@ def _typecast_param(param, expected_param):
     """Tries converting parsed parameter from string to what is needed for the filter's effect"""
     try:
         filter_param = expected_param.param_type(param)
-    except ValueError:
+    except ValueError as e:
         print("Error!")
-        print(f"Expected '{expected_param.name}':{param.upper()} to be a '{expected_param.param_type}'.\n")
-        sys.exit(1)
+        print(f"Expected '{expected_param.name}': {param.upper()} to be a '{expected_param.param_type}'.\n")
+        raise e
     else:
         return filter_param
 
@@ -94,15 +98,14 @@ def _validate_param(param, expected_param):
             raise exceptions.ConditionError(param=param, condition=expected_param.validity_str)
     except exceptions.ConditionError as e:
         print(e)
-        sys.exit(1)
+        raise e
 
 
 def _check_filter_name(name, filters):
     """Verifies filter with given name is present in filter collection"""
     try:
         if not name.lower() in [f.name for f in filters]:
-            raise Exception(f"'{name.upper()}' is not a filter.")
-    except Exception as e:
-        print("Error!\n", e, "\n")
-        sys.exit(1)
-
+            raise ValueError(f"'{name.upper()}' is not a filter.")
+    except ValueError as e:
+        print("\nError!\n", e, "\n")
+        raise e
