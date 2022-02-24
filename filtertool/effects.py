@@ -34,20 +34,20 @@ def overlay_fx(image, **kwargs):
     Used keyword arguments:
         - Image2_filename (type: str)
         - Horizontal/Vertical Placement (type: float)
-        - Horizontal/Vertical Anchor (type: float)
+
     [Does NOT change the image's mode (And RGB image stays RGB, so on)]
     """
     img1 = image
     img2 = Image.open(kwargs["Image2_filename"])
     place = kwargs["Horizontal Placement"], kwargs["Vertical Placement"]
-    anchor = kwargs["Horizontal Anchor"], kwargs["Vertical Anchor"]
+    # anchor = kwargs["Horizontal Anchor"], kwargs["Vertical Anchor"]
     # Prepare img2 to be blended
-    result = _overlay_aux(img1, img2, place, anchor)
+    result = _overlay_aux(img1, img2, place)
 
     return result
 
 
-def _overlay_aux(image1, image2, placement, anchor):
+def _overlay_aux(image1, image2, placement, anchor=(.5, .5)):
     """
     Because the Overlay function from PIL requires the images
     to be the same size, the overlaying (top) image needs to be
@@ -73,12 +73,18 @@ def _overlay_aux(image1, image2, placement, anchor):
     return result
 
 
-def _calculate_placement(im1, im2, placement, anchor):
-
+def _calculate_placement(im1, im2, placement, anchor=(.5, .5)):
+    """Given a pair of coordinates (placement and anchor) find out at what pixel position of Image1
+    must one put the top left corner of Image2 so that the Anchor Point of Image2 matches with the Placement
+    Point in Image1.
+    As Placement and Anchor are numbers in the range [0,1], representing the relative
+    width and height of Image 1 as a unit square, this function is necessary to perform
+    the Paste operation with absolute pixel coordinates.
+    """
     x_1, y_1 = im1.size
     x_2, y_2 = im2.size
     place_x, place_y = placement
-    anchor_x, anchor_y = anchor
+    anchor_x, anchor_y = anchor     # .5, .5 center of the second image
 
     center_x_post = place_x * x_1
     center_y_post = place_y * y_1

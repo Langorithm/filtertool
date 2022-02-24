@@ -85,6 +85,33 @@ param_overlay_place_y = Param(
     validity_func=lambda place_x: 0 <= place_x <= 1,
     validity_str=f"Invalid placement coordinate.\t 0 ≤ Y ≤ 1"
 )
+
+supported_formats = ".png"
+param_overlay_img2 = Param(
+    name="Image2_filename",
+    param_type=str,
+    validity_func=lambda filename: filename.lower().endswith(supported_formats),
+    validity_str=f"Invalid file format.\t [Supported formats: {' '.join(supported_formats)}]")
+
+# noinspection GrazieInspection
+filter_overlay = Filter(
+    "overlay",
+    """Blends a PNG image into the source image. 
+    
+    Takes a pair of X, Y coordinates, each ranging from 0 to 1,
+    indicating where the PNG will be centered.  
+    [0.5  0.5 being the middle of the source image]
+    """,
+    effects.overlay_fx,
+    [param_overlay_img2,
+     param_overlay_place_x, param_overlay_place_y]
+    # param_overlay_anchor_x, param_overlay_anchor_y]
+)
+filters.add(filter_overlay)
+
+
+# Deactivated code
+"""
 param_overlay_anchor_x = Param(
     name="Horizontal Anchor",
     param_type=float,
@@ -97,19 +124,4 @@ param_overlay_anchor_y = Param(
     validity_func=lambda anchor_y: 0 <= anchor_y <= 1,
     validity_str=f"Invalid anchor coordinate.\t 0 ≤ Y ≤ 1"
 )
-supported_formats = ".png"
-param_overlay_img2 = Param(
-    name="Image2_filename",
-    param_type=str,
-    validity_func=lambda filename: filename.lower().endswith(supported_formats),
-    validity_str=f"Invalid file format.\t [Supported formats: {' '.join(supported_formats)}]")
-
-filter_overlay = Filter(
-    "overlay",
-    "Blends a second image into the first.",
-    effects.overlay_fx,
-    [param_overlay_img2,
-     param_overlay_place_x, param_overlay_place_y,
-     param_overlay_anchor_x, param_overlay_anchor_y]
-)
-filters.add(filter_overlay)
+"""
