@@ -21,18 +21,18 @@ class CLITestCase(unittest.TestCase):
             "grayscale",
             "rotate", "180",
             "grayscale",
-            "overlay", "python.png",
+            "overlay", "python.png", ".5", ".5",
             "rotate", "90",
-            "overlay", "python.png"
+            "overlay", "python.png", "1", ".1"
             ]
         expected = [
             (filter_gs, {}),
             (filter_gs, {}),
-            (filter_rot, {"Degrees": 180}),
+            (filter_rot, {"DEGREES": 180}),
             (filter_gs, {}),
-            (filter_overlay, {"Image2_filename": "python.png"}),
-            (filter_rot, {"Degrees": 90}),
-            (filter_overlay, {"Image2_filename": "python.png"}),
+            (filter_overlay, {"IMG_2": "python.png","X_PLACE":.5,"Y_PLACE":.5}),
+            (filter_rot, {"DEGREES": 90}),
+            (filter_overlay, {"IMG_2": "python.png","X_PLACE":1,"Y_PLACE":.1}),
         ]
         seq = cli.gen_filter_sequence(args)
         self.assertEqual(expected, seq)
@@ -51,26 +51,11 @@ class CLITestCase(unittest.TestCase):
         self.assertEqual(cm.exception.code, errno.EINVAL)
 
     def test_gen_filter_sequence_invalid_param(self):
-        args = ["overlay", "document.pdf"]
+        args = ["overlay", "document.pdf", ".5", ".5"]
         with self.assertRaises(SystemExit) as cm:
             cli.gen_filter_sequence(args)
 
         self.assertEqual(cm.exception.code, errno.EINVAL)
-
-
-class OutputTestCase(unittest.TestCase):
-
-    def setUp(self) -> None:
-        pass
-
-    def test_main(self):
-        pass
-
-    def test_(self):
-        pass
-
-    def tearDown(self) -> None:
-        pass
 
 
 if __name__ == '__main__':

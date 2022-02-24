@@ -3,6 +3,7 @@ import math
 
 from PIL import Image, ImageChops, ImageDraw, ImageFont
 
+
 def grayscale_fx(image, **_):
     """Turn an image into shades of gray via gray-scaling.
 
@@ -95,6 +96,13 @@ def _calculate_placement(im1, im2, placement, anchor=(.5, .5)):
 
 
 def memeify_fx(image, **kwargs):
+    """
+    Calculate the optimal font size for the upper and lower text to fit in the image in a single line.
+    Then, draw those words in Impact, of the found size.
+    Used parameters:
+        DOWN_TEXT (type: str)
+        TOP_TEXT (type: str)
+    """
     down_text = kwargs["DOWN_TEXT"]
     top_text = kwargs["TOP_TEXT"]
 
@@ -116,7 +124,14 @@ def memeify_fx(image, **kwargs):
 
 
 def _find_perfect_fit(image, xy, font_name, text, limits):
-
+    """
+    :param image: Image to be paste the image in. Passed for size reference and to create the drawing context.
+    :param xy: Absolute pixel position where the text will be pasted, required for the measuring function (textbbox)
+    :param font_name: Name of the font to be loaded.
+    :param text: Text to measure in the given font, in different sizes.
+    :param limits: Max horizontal and vertical sizes for the text. Used in calculating the optimal fit.
+    :return: The resized font.
+    """
     height, width = image.size
     estimated_text_size = 1 # int(math.sqrt(height * width))
 
@@ -135,7 +150,6 @@ def _find_perfect_fit(image, xy, font_name, text, limits):
             font_size -= 10
 
         font = ImageFont.truetype(font_name, font_size)
-        print(font_size)
         text_fits = _does_text_fit(context, xy, text, font, limits)
         perfect_fit = text_fits ^ prev_text_fit
 
@@ -143,7 +157,7 @@ def _find_perfect_fit(image, xy, font_name, text, limits):
 
 
 def _does_text_fit(context, xy, text, font, limits):
-
+    """Aids in checking if the current text and font combination fit inside a box of the given limits"""
     box = context.textbbox(xy, text, font, "mt", align="center", stroke_width=2)
 
     box_x0, box_y0, box_x1, box_y1 = box

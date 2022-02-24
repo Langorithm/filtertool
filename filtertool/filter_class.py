@@ -3,16 +3,8 @@ Represents an image filter, including its effect on files,
 the type/requirements of its parameters.
 
 """
-from typing import Any, NamedTuple, Callable
+from filtertool.Param import Param
 import filtertool.effects as effects
-
-
-class Param(NamedTuple):
-    name:           str
-    description:    str
-    param_type:     type
-    validity_func:  Callable[[Any], bool]
-    validity_str:   str
 
 
 class Filter:
