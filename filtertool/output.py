@@ -1,5 +1,4 @@
 """File storing functions dealing with the resulting files"""
-import os.path
 
 
 def output_image(image, args, output_name, filters):

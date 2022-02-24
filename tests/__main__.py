@@ -2,8 +2,6 @@ import errno
 import unittest
 
 import filtertool.cli as cli
-import filtertool.filter_class as filter_class
-import filtertool.exceptions as exceptions
 from filtertool.filter_class import *
 
 

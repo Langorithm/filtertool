@@ -1,3 +1,4 @@
+import errno
 import sys
 
 from PIL import Image
@@ -16,7 +17,7 @@ if __name__ == '__main__':
         image = Image.open(input_filename)
     except FileNotFoundError:
         print(f"No such file: {input_filename}")
-        sys.exit(1)
+        sys.exit(errno.ENOENT)
 
     for _filter, params in filters:
         image = _filter.apply(image, params)

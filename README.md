@@ -37,4 +37,4 @@ Also include how much time you spent on it.
 ## Resolution
 
 ### Testing
-No testing of PIL or Standard Library (argparse)
+<!--- TODO No testing of PIL or Standard Library (argparse) --->

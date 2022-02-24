@@ -17,7 +17,9 @@ class Param(NamedTuple):
 class Filter:
     """Filter docstring TODO"""
     # TODO verbosity description
-    def __init__(self, name, help_text, effect, params=[]):
+    def __init__(self, name, help_text, effect, params=None):
+        if params is None:
+            params = []
         self.name = name.lower()
         self.description = help_text
         self._params = params
