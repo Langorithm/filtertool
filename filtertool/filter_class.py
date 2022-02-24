@@ -3,6 +3,8 @@ Represents an image filter, including its effect on files,
 the type/requirements of its parameters.
 
 """
+from copy import deepcopy
+
 from filtertool.Param import Param
 import filtertool.effects as effects
 
@@ -51,12 +53,14 @@ filter_gs = Filter(
 filters.append(filter_gs)
 
 # --- ROTATE ---
+# -- params --
 param_rot_degrees = Param(
     name="DEGREES",
     description="Angle to rotate image by.",
     param_type=float,
     validity_func=lambda _: True,
     validity_str="")
+# -- rotate filter --
 filter_rot = Filter(
     name="rotate",
     help_text="Rotate the Image X degrees counter-clockwise.",
@@ -66,22 +70,17 @@ filters.append(filter_rot)
 
 
 # --- OVERLAY ---
-
-# TODO Type Param has outgrown being a Named Tuple and should be its own class to avoid code duplication
+# -- params --
 param_overlay_place_x = Param(
     name="X_PLACE",
     description="Where to center the top image: from 0 (leftmost) to 1 (rightmost)",
     param_type=float,
-    validity_func=lambda place_x: 0 <= place_x <= 1,
-    validity_str=f"Invalid placement coordinate.\t 0 ≤ X ≤ 1"
+    validity_func=lambda place: 0 <= place <= 1,
+    validity_str=f"Invalid placement coordinate.\t 0 ≤ PLACE ≤ 1"
 )
-param_overlay_place_y = Param(
-    name="Y_PLACE",
-    description="Where to center the top image: from 0 (top) to 1 (bottom)",
-    param_type=float,
-    validity_func=lambda place_x: 0 <= place_x <= 1,
-    validity_str=f"Invalid placement coordinate.\t 0 ≤ Y ≤ 1"
-)
+param_overlay_place_y = deepcopy(param_overlay_place_x)
+param_overlay_place_y.name = "Y_PLACE"
+param_overlay_place_y.description = "Where to center the top image: from 0 (top) to 1 (bottom)"
 
 supported_formats = ".png"
 param_overlay_img2 = Param(
@@ -91,6 +90,7 @@ param_overlay_img2 = Param(
     validity_func=lambda filename: filename.lower().endswith(supported_formats),
     validity_str=f"Invalid file format.\t [Supported formats: {' '.join(supported_formats)}]")
 
+# -- overlay filter --
 filter_overlay = Filter(
     "overlay",
     "Blends a PNG image into the source image.",
@@ -101,6 +101,9 @@ filter_overlay = Filter(
 )
 filters.append(filter_overlay)
 
+# --- MEMEIFY ---
+
+# params
 param_memeify_top_text = Param(
     name="TOP_TEXT",
     description="Text in the top part of the image.",
@@ -108,15 +111,11 @@ param_memeify_top_text = Param(
     validity_func=lambda _: True,
     validity_str=""
 )
-param_memeify_down_text = Param(
-    name="DOWN_TEXT",
-    description="Text in the top part of the image.",
-    param_type=str,
-    validity_func=lambda _: True,
-    validity_str=""
-)
+param_memeify_down_text = deepcopy(param_memeify_top_text)
+param_memeify_down_text.name = "DOWN_TEXT"
+param_memeify_down_text.description = "Text in the down part of the image."
 
-
+# memeify filter
 filter_memeify = Filter(
     "memeify",
     "Turns your image into a 2010's meme!",
