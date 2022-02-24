@@ -63,7 +63,12 @@ def _extract_params(_filter, args):
     Return the list of parameters to be used when applying
     filter's effects."""
     expected_params = _filter.get_params()
-    assert (len(expected_params) == len(args))
+    try:
+        if len(expected_params) != len(args):
+            raise ValueError
+    except ValueError:
+        print("\nError!\nMissing parameters.\n")
+        sys.exit(errno.EINVAL)
 
     params = {}
     for i in range(len(args)):
