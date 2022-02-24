@@ -9,6 +9,7 @@ import filtertool.effects as effects
 
 class Param(NamedTuple):
     name:           str
+    description:    str
     param_type:     type
     validity_func:  Callable[[Any], bool]
     validity_str:   str
@@ -47,40 +48,44 @@ class Filter:
 # ------- Filter Instances --------
 # ---------------------------------
 
-filters = set()
+
+filters = []
 
 # --- GRAYSCALE ---
 filter_gs = Filter(
     "grayscale",
     "Turn image black and white.",
     effects.grayscale_fx)
-filters.add(filter_gs)
+filters.append(filter_gs)
 
 # --- ROTATE ---
 param_rot_degrees = Param(
-    name="Degrees",
-    param_type=int,
-    validity_func=lambda n: n <= 360,
-    validity_str="n<=360")
+    name="DEGREES",
+    description="Angle to rotate image by.",
+    param_type=float,
+    validity_func=lambda _: True,
+    validity_str="")
 filter_rot = Filter(
     name="rotate",
-    help_text="Rotate the Image N degrees clockwise.",
+    help_text="Rotate the Image X degrees counter-clockwise.",
     effect=effects.rotate_fx,
     params=[param_rot_degrees])
-filters.add(filter_rot)
+filters.append(filter_rot)
 
 
 # --- OVERLAY ---
 
 # TODO Type Param has outgrown being a Named Tuple and should be its own class to avoid code duplication
 param_overlay_place_x = Param(
-    name="Horizontal Placement",
+    name="X_PLACE",
+    description="Where to center the top image: from 0 (leftmost) to 1 (rightmost)",
     param_type=float,
     validity_func=lambda place_x: 0 <= place_x <= 1,
     validity_str=f"Invalid placement coordinate.\t 0 ≤ X ≤ 1"
 )
 param_overlay_place_y = Param(
-    name="Vertical Placement",
+    name="Y_PLACE",
+    description="Where to center the top image: from 0 (top) to 1 (bottom)",
     param_type=float,
     validity_func=lambda place_x: 0 <= place_x <= 1,
     validity_str=f"Invalid placement coordinate.\t 0 ≤ Y ≤ 1"
@@ -88,26 +93,21 @@ param_overlay_place_y = Param(
 
 supported_formats = ".png"
 param_overlay_img2 = Param(
-    name="Image2_filename",
+    name="IMG_2",
+    description="Path to top image. Must be a PNG file.",
     param_type=str,
     validity_func=lambda filename: filename.lower().endswith(supported_formats),
     validity_str=f"Invalid file format.\t [Supported formats: {' '.join(supported_formats)}]")
 
-# noinspection GrazieInspection
 filter_overlay = Filter(
     "overlay",
-    """Blends a PNG image into the source image. 
-    
-    Takes a pair of X, Y coordinates, each ranging from 0 to 1,
-    indicating where the PNG will be centered.  
-    [0.5  0.5 being the middle of the source image]
-    """,
+    "Blends a PNG image into the source image.",
     effects.overlay_fx,
     [param_overlay_img2,
      param_overlay_place_x, param_overlay_place_y]
     # param_overlay_anchor_x, param_overlay_anchor_y]
 )
-filters.add(filter_overlay)
+filters.append(filter_overlay)
 
 
 # Deactivated code
