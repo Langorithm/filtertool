@@ -81,7 +81,7 @@ param_overlay_place_y = deepcopy(param_overlay_place_x)
 param_overlay_place_y.name = "Y_PLACE"
 param_overlay_place_y.description = "Where to center the top image: from 0 (top) to 1 (bottom)"
 
-supported_formats = ".png"
+supported_formats = (".png",)
 param_overlay_img2 = Param(
     name="IMG_2",
     description="Path to top image. Must be a PNG file.",

@@ -23,7 +23,8 @@ class CLITestCase(unittest.TestCase):
             "grayscale",
             "overlay", "python.png", ".5", ".5",
             "rotate", "90",
-            "overlay", "python.png", "1", ".1"
+            "overlay", "python.png", "1", ".1",
+            "memeify", "TESTING HIGH", "TESTING LOW!"
             ]
         expected = [
             (filter_gs, {}),
@@ -33,6 +34,7 @@ class CLITestCase(unittest.TestCase):
             (filter_overlay, {"IMG_2": "python.png","X_PLACE":.5,"Y_PLACE":.5}),
             (filter_rot, {"DEGREES": 90}),
             (filter_overlay, {"IMG_2": "python.png","X_PLACE":1,"Y_PLACE":.1}),
+            (filter_memeify, {"TOP_TEXT": "TESTING HIGH", "DOWN_TEXT": "TESTING LOW!"})
         ]
         seq = cli.gen_filter_sequence(args)
         self.assertEqual(expected, seq)
