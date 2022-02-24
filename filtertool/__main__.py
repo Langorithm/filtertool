@@ -14,12 +14,15 @@ if __name__ == '__main__':
     filters = cli.gen_filter_sequence(args.filters)
 
     try:
-        image = Image.open(input_filename)
-    except FileNotFoundError:
-        print(f"No such file: {input_filename}")
-        sys.exit(errno.ENOENT)
+        with Image.open(input_filename) as image:
+            for _filter, params in filters:
+                image = _filter.apply(image, params)
 
-    for _filter, params in filters:
-        image = _filter.apply(image, params)
+            output.output_image(image, args, output_filename, filters)
 
-    output.output_image(image, args, output_filename, filters)
+    except IOError as e:
+        print(e)
+        sys.exit(errno.EIO)
+
+
+

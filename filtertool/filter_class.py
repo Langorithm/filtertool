@@ -66,7 +66,7 @@ filter_rot = Filter(
     params=[param_rot_degrees])
 filters.add(filter_rot)
 
-supported_formats = ".png", ".jpg", ".jpeg"
+supported_formats = ".png"
 param_overlay_img2 = Param(
     name="Image2_filename",
     param_type=str,
