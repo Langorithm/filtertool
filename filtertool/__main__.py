@@ -21,4 +21,4 @@ if __name__ == '__main__':
     for _filter, params in filters:
         image = _filter.apply(image, params)
 
-    output.output_image(image, args, output_filename)
+    output.output_image(image, args, output_filename, filters)
